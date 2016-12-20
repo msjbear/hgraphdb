@@ -1,14 +1,8 @@
 package io.hgraphdb;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
 import org.junit.After;
 import org.junit.Before;
-
-import java.io.IOException;
 
 public class HBaseGraphTest {
 
