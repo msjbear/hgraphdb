@@ -16,12 +16,14 @@ import java.util.stream.Stream;
 public class EdgeIndexWriter implements Creator {
 
     private final HBaseGraph graph;
+    private final HBaseGraphConfiguration conn;
     private final Edge edge;
     private final Map<String, Boolean> keys;
     private final Long ts;
 
     public EdgeIndexWriter(HBaseGraph graph, Edge edge, String key, Long ts) {
         this.graph = graph;
+        this.conn = graph.configuration();
         this.edge = edge;
         this.keys = ImmutableMap.of(key, false);
         this.ts = ts;
@@ -29,6 +31,7 @@ public class EdgeIndexWriter implements Creator {
 
     public EdgeIndexWriter(HBaseGraph graph, Edge edge, Iterator<IndexMetadata> indices, Long ts) {
         this.graph = graph;
+        this.conn = graph.configuration();
         this.edge = edge;
         this.keys = IteratorUtils.collectMap(indices, IndexMetadata::propertyKey, IndexMetadata::isUnique);
         this.ts = ts;
@@ -50,6 +53,7 @@ public class EdgeIndexWriter implements Creator {
         long timestamp = ts != null ? ts : HConstants.LATEST_TIMESTAMP;
         boolean isUnique = entry.getValue();
         Put put = new Put(graph.getEdgeIndexModel().serializeForWrite(edge, direction, isUnique, entry.getKey()));
+        put.setTTL(conn.getEdgeRowTTL());
         put.addColumn(Constants.DEFAULT_FAMILY_BYTES, Constants.CREATED_AT_BYTES,
                 timestamp, ValueUtils.serialize(((HBaseEdge) edge).createdAt()));
         if (isUnique) {

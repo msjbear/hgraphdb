@@ -1,10 +1,6 @@
 package io.hgraphdb.mutators;
 
-import io.hgraphdb.Constants;
-import io.hgraphdb.ElementType;
-import io.hgraphdb.HBaseEdge;
-import io.hgraphdb.HBaseGraph;
-import io.hgraphdb.ValueUtils;
+import io.hgraphdb.*;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -16,10 +12,12 @@ import java.util.Iterator;
 public class EdgeWriter implements Creator {
 
     private final HBaseGraph graph;
+    private final HBaseGraphConfiguration conn;
     private final Edge edge;
 
     public EdgeWriter(HBaseGraph graph, Edge edge) {
         this.graph = graph;
+        this.conn = graph.configuration();
         this.edge = edge;
     }
 
@@ -32,6 +30,7 @@ public class EdgeWriter implements Creator {
     public Iterator<Put> constructInsertions() {
         final String label = edge.label() != null ? edge.label() : Edge.DEFAULT_LABEL;
         Put put = new Put(ValueUtils.serializeWithSalt(edge.id()));
+        put.setTTL(conn.getEdgeRowTTL());
         put.addColumn(Constants.DEFAULT_FAMILY_BYTES, Constants.TO_BYTES,
                 ValueUtils.serialize(edge.inVertex().id()));
         put.addColumn(Constants.DEFAULT_FAMILY_BYTES, Constants.FROM_BYTES,

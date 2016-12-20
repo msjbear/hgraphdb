@@ -14,12 +14,14 @@ import java.util.Map;
 public class VertexIndexWriter implements Creator {
 
     private final HBaseGraph graph;
+    private final HBaseGraphConfiguration conn;
     private final Vertex vertex;
     private final Map<String, Boolean> keys;
     private final Long ts;
 
     public VertexIndexWriter(HBaseGraph graph, Vertex vertex, String key) {
         this.graph = graph;
+        this.conn = graph.configuration();
         this.vertex = vertex;
         this.keys = ImmutableMap.of(key, false);
         this.ts = null;
@@ -27,6 +29,7 @@ public class VertexIndexWriter implements Creator {
 
     public VertexIndexWriter(HBaseGraph graph, Vertex vertex, Iterator<IndexMetadata> indices, Long ts) {
         this.graph = graph;
+        this.conn = graph.configuration();
         this.vertex = vertex;
         this.keys = IteratorUtils.collectMap(indices, IndexMetadata::propertyKey, IndexMetadata::isUnique);
         this.ts = ts;
@@ -46,6 +49,7 @@ public class VertexIndexWriter implements Creator {
         long timestamp = ts != null ? ts : HConstants.LATEST_TIMESTAMP;
         boolean isUnique = entry.getValue();
         Put put = new Put(graph.getVertexIndexModel().serializeForWrite(vertex, isUnique, entry.getKey()));
+        put.setTTL(conn.getVertexRowTTL());
         put.addColumn(Constants.DEFAULT_FAMILY_BYTES, Constants.CREATED_AT_BYTES,
                 timestamp, ValueUtils.serialize(((HBaseVertex) vertex).createdAt()));
         if (isUnique) {

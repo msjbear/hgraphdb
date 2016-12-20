@@ -1,8 +1,14 @@
 package io.hgraphdb;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
 import org.junit.After;
 import org.junit.Before;
+
+import java.io.IOException;
 
 public class HBaseGraphTest {
 
@@ -12,7 +18,7 @@ public class HBaseGraphTest {
 
     @Before
     public void makeGraph() {
-        graph = (HBaseGraph) GraphFactory.open(generateGraphConfig("testgraph"));
+        graph = (HBaseGraph) GraphFactory.open(generateGraphConfig("youzpgraph"));
     }
 
     protected HBaseGraphConfiguration generateGraphConfig(String graphNamespace) {
@@ -23,8 +29,9 @@ public class HBaseGraphTest {
         if (useMock) {
             return config.setInstanceType(HBaseGraphConfiguration.InstanceType.MOCK);
         } else {
-            config.set("hbase.zookeeper.quorum", "127.0.0.1");
-            config.set("zookeeper.znode.parent", "/hbase-unsecure");
+            config.set("hbase.zookeeper.quorum", "panda3,panda4,panda5");
+            config.set("hbase.zookeeper.property.clientport","2181");
+            config.set("zookeeper.znode.parent", "/hbase_lions");
             return config.setInstanceType(HBaseGraphConfiguration.InstanceType.DISTRIBUTED);
         }
     }

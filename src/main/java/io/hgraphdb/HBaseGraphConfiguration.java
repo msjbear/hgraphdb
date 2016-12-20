@@ -31,7 +31,9 @@ public class HBaseGraphConfiguration extends AbstractConfiguration {
         public static final String TABLE_ASYNC_WAL                 = "gremlin.hbase.tableAsyncWAL";
         public static final String COMPRESSION_ALGO                = "gremlin.hbase.compression";
         public static final String EDGE_TABLE_TTL                  = "gremlin.hbase.edgeTableTTL";
+        public static final String EDGE_ROW_TTL                    = "gremlin.hbase.edgeRowTTL";
         public static final String VERTEX_TABLE_TTL                = "gremlin.hbase.vertexTableTTL";
+        public static final String VERTEX_ROW_TTL                  = "gremlin.hbase.vertexRowTTL";
         public static final String REGION_COUNT                    = "gremlin.hbase.regionCount";
         public static final String GLOBAL_CACHE_MAX_SIZE           = "gremlin.hbase.globalCacheMaxSize";
         public static final String GLOBAL_CACHE_TTL_SECS           = "gremlin.hbase.globalCacheTtlSecs";
@@ -151,8 +153,17 @@ public class HBaseGraphConfiguration extends AbstractConfiguration {
         return conf.getInt(Keys.EDGE_TABLE_TTL, HConstants.FOREVER);
     }
 
+    public int getEdgeRowTTL() {
+        return conf.getInt(Keys.EDGE_ROW_TTL, HConstants.FOREVER);
+    }
+
     public HBaseGraphConfiguration setEdgeTableTTL(int ttl) {
         conf.setProperty(Keys.EDGE_TABLE_TTL, ttl);
+        return this;
+    }
+
+    public HBaseGraphConfiguration setEdgeRowTTL(int ttl) {
+        conf.setProperty(Keys.EDGE_ROW_TTL, ttl);
         return this;
     }
 
@@ -160,8 +171,17 @@ public class HBaseGraphConfiguration extends AbstractConfiguration {
         return conf.getInt(Keys.VERTEX_TABLE_TTL, HConstants.FOREVER);
     }
 
+    public int getVertexRowTTL() {
+        return conf.getInt(Keys.VERTEX_ROW_TTL, HConstants.FOREVER);
+    }
+
     public HBaseGraphConfiguration setVertexTableTTL(int ttl) {
         conf.setProperty(Keys.VERTEX_TABLE_TTL, ttl);
+        return this;
+    }
+
+    public HBaseGraphConfiguration setVertexRowTTL(int ttl) {
+        conf.setProperty(Keys.VERTEX_ROW_TTL, ttl);
         return this;
     }
 

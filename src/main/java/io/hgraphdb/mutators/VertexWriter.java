@@ -1,10 +1,6 @@
 package io.hgraphdb.mutators;
 
-import io.hgraphdb.Constants;
-import io.hgraphdb.ElementType;
-import io.hgraphdb.HBaseGraph;
-import io.hgraphdb.HBaseVertex;
-import io.hgraphdb.ValueUtils;
+import io.hgraphdb.*;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -16,10 +12,12 @@ import java.util.Iterator;
 public final class VertexWriter implements Creator {
 
     private final HBaseGraph graph;
+    private final HBaseGraphConfiguration conn;
     private final Vertex vertex;
 
     public VertexWriter(HBaseGraph graph, Vertex vertex) {
         this.graph = graph;
+        this.conn = graph.configuration();
         this.vertex = vertex;
     }
 
@@ -32,6 +30,7 @@ public final class VertexWriter implements Creator {
     public Iterator<Put> constructInsertions() {
         final String label = vertex.label() != null ? vertex.label() : Vertex.DEFAULT_LABEL;
         Put put = new Put(ValueUtils.serializeWithSalt(vertex.id()));
+        put.setTTL(conn.getVertexRowTTL());
         put.addColumn(Constants.DEFAULT_FAMILY_BYTES, Constants.LABEL_BYTES,
                 ValueUtils.serialize(label));
         put.addColumn(Constants.DEFAULT_FAMILY_BYTES, Constants.CREATED_AT_BYTES,
