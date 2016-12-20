@@ -18,7 +18,7 @@ public class HBaseGraphTest {
 
     @Before
     public void makeGraph() {
-        graph = (HBaseGraph) GraphFactory.open(generateGraphConfig("youzpgraph"));
+        graph = (HBaseGraph) GraphFactory.open(generateGraphConfig("testgraph"));
     }
 
     protected HBaseGraphConfiguration generateGraphConfig(String graphNamespace) {
@@ -29,9 +29,8 @@ public class HBaseGraphTest {
         if (useMock) {
             return config.setInstanceType(HBaseGraphConfiguration.InstanceType.MOCK);
         } else {
-            config.set("hbase.zookeeper.quorum", "panda3,panda4,panda5");
-            config.set("hbase.zookeeper.property.clientport","2181");
-            config.set("zookeeper.znode.parent", "/hbase_lions");
+            config.set("hbase.zookeeper.quorum", "127.0.0.1");
+            config.set("zookeeper.znode.parent", "/hbase-unsecure");
             return config.setInstanceType(HBaseGraphConfiguration.InstanceType.DISTRIBUTED);
         }
     }
